@@ -1,73 +1,27 @@
-# React + TypeScript + Vite
+# JusCleaner (ProtocoloFácil) ⚖️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Sanitização de arquivos jurídicos 100% no navegador.
 
-Currently, two official plugins are available:
+O JusCleaner é uma ferramenta desenvolvida para advogados e estagiários de direito que precisam adequar nomes de arquivos para upload em tribunais (PJe, e-SAJ) de forma rápida e segura.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## O Problema
+Sistemas judiciais rejeitam arquivos com acentos, espaços ou caracteres especiais. Renomear 50 PDFs manualmente é propenso a erros e lento.
 
-## React Compiler
+## A Solução
+- **Processamento Local:** Nenhum arquivo é enviado para servidores. Tudo roda no navegador do usuário (Segurança/LGPD).
+- **Sanitização Automática:** Remove acentos, troca espaços por `_` e limita caracteres.
+- **Bulk Action:** Arraste 50 arquivos e baixe um único `.zip` pronto para protocolar.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 🛠️ Stack Tecnológica
+- **Core:** React + TypeScript + Vite
+- **Estilo:** Tailwind CSS
+- **Arquivos:** JSZip + FileSaver + React Dropzone
 
-## Expanding the ESLint configuration
+## Como rodar localmente
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone [https://github.com/daniele-senko/juscleaner.git](https://github.com/daniele-senko/juscleaner.git)
+cd juscleaner
+npm install
+npm run dev
 ```
