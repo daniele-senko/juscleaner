@@ -14,7 +14,6 @@ app.use(
 );
 
 app.use(express.json());
-
 app.use("/compress", compressRoute);
 
 app.get("/", (req, res) => {
@@ -23,10 +22,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3333;
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`✅ Backend local: http://localhost:${PORT}`)
-  })
-}
-
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
