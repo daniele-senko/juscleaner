@@ -1,29 +1,25 @@
 {
-  "name": "backend",
+  "name": "juscleaner-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "@ilovepdf/ilovepdf-nodejs": "^0.3.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "multer": "^2.0.2"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "multer": "^1.4.5-lts.1",
+    "@ilovepdf/ilovepdf-nodejs": "^X.X.X"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/multer": "^2.0.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.x.x",
+    "ts-node-dev": "^2.x.x",
+    "@types/express": "^4.x.x",
+    "@types/node": "^20.x.x",
+    "@types/cors": "^2.x.x",
+    "@types/multer": "^1.x.x"
   }
 }
