@@ -12,7 +12,7 @@ export const Header = () => (
     </h1>
     <p className="text-slate-500 mt-2 text-lg">
       Sanitização de Arquivos Jurídicos{" "}
-      <span className="text-blue-600 font-medium">100% no Navegador</span>.
+      <span className="text-blue-600 font-medium">Otimizada para PJe e Projudi</span>.
     </p>
   </header>
 );
