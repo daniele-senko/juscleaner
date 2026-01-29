@@ -23,10 +23,10 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3333;
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
-    console.log(`✅ Backend local: http://localhost:${PORT}`);
-  });
+    console.log(`✅ Backend local: http://localhost:${PORT}`)
+  })
 }
 
-export default app;
+module.exports = app;
