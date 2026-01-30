@@ -13,6 +13,8 @@ Sistemas judiciais frequentemente rejeitam petições devido a anexos pesados ou
 
 A arquitetura híbrida foi desenhada para superar as limitações de tempo de execução de funções serverless, separando o processamento pesado em um serviço dedicado.
 
+https://github.com/user-attachments/assets/4aad5959-30e9-433f-bbee-d7bfeb3b4e40
+
 ## 🚀 Tecnologias Utilizadas
 
 O projeto foi construído utilizando conceitos modernos de desenvolvimento web e arquitetura distribuída:
