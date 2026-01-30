@@ -1,37 +1,40 @@
-```markdown
 # JusCleaner
 
-O JusCleaner é uma aplicação Full-Stack desenvolvida para auxiliar advogados e profissionais do direito na compressão de arquivos PDF para atender aos limites rígidos dos sistemas de peticionamento eletrônico (PJe, e-SAJ, Projudi, etc.), mantendo a legibilidade dos documentos.
+O JusCleaner é uma aplicação Full-Stack desenvolvida para auxiliar advogados e profissionais do direito na preparação de documentos para peticionamento eletrônico. A ferramenta resolve os dois maiores problemas de upload nos tribunais (PJe, e-SAJ, Projudi, etc.): o tamanho excessivo dos arquivos e a incompatibilidade de nomes com caracteres especiais.
 
 ![Status do Projeto](https://img.shields.io/badge/status-concluído-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## 📋 Sobre o Projeto
 
-Sistemas judiciais frequentemente rejeitam petições devido ao tamanho dos anexos. O JusCleaner resolve esse problema oferecendo uma interface simples para compressão inteligente de documentos, utilizando a API do iLovePDF para garantir a máxima redução com a menor perda de qualidade visual possível.
+Sistemas judiciais frequentemente rejeitam petições devido a anexos pesados ou nomes de arquivos fora do padrão. O JusCleaner atua nessas duas frentes:
 
-A arquitetura foi desenhada para superar as limitações de tempo de execução de funções serverless, separando o processamento pesado em um serviço dedicado.
+1.  **Compressão Inteligente:** Utiliza a API do iLovePDF para reduzir o tamanho do documento mantendo a legibilidade jurídica.
+2.  **Sanitização de Nomes:** Renomeia automaticamente o arquivo, removendo acentos, espaços e caracteres especiais (ex: `Procuração do João.pdf` torna-se `procuracao_do_joao.pdf`), garantindo aceitação em qualquer sistema.
+
+A arquitetura híbrida foi desenhada para superar as limitações de tempo de execução de funções serverless, separando o processamento pesado em um serviço dedicado.
 
 ## 🚀 Tecnologias Utilizadas
 
 O projeto foi construído utilizando conceitos modernos de desenvolvimento web e arquitetura distribuída:
 
 ### Frontend (Cliente)
-- **React.js (Vite):** Framework para construção de interfaces reativas e performáticas.
-- **TypeScript:** Tipagem estática para maior segurança e manutenibilidade do código.
+- **React.js (Vite):** Framework para construção de interfaces reativas.
+- **TypeScript:** Tipagem estática para maior segurança e manutenibilidade.
 - **Tailwind CSS:** Estilização utilitária para um design limpo e responsivo.
 - **Hospedagem:** Vercel.
 
 ### Backend (API)
 - **Node.js & Express:** Servidor robusto para gerenciamento das requisições.
-- **iLovePDF SDK:** Integração para processamento e compressão de arquivos.
-- **Multer:** Middleware para manipulação de uploads (multipart/form-data).
+- **iLovePDF SDK:** Integração para processamento e compressão.
+- **Multer:** Middleware para manipulação de uploads.
+- **Regex:** Algoritmos de sanitização de strings para padronização de nomes.
 - **Hospedagem:** Render (Web Service).
 
 ## ⚙️ Arquitetura
 
 O sistema opera em duas frentes:
-1. **Frontend:** Interface visual hospedada na Vercel, responsável pela interação com o usuário.
-2. **Backend:** API hospedada no Render, responsável por receber o arquivo, comunicar-se com o serviço de compressão e retornar o binário processado.
+1. **Frontend:** Interface visual hospedada na Vercel. Antes mesmo do envio, o cliente já valida o arquivo.
+2. **Backend:** API hospedada no Render que recebe o arquivo, realiza a comunicação com o serviço de compressão, aplica a sanitização final e retorna o binário processado.
 
 ## 📦 Como Rodar Localmente
 
@@ -39,9 +42,8 @@ Para executar este projeto na sua máquina, você precisará do [Node.js](https:
 
 ### 1. Clonar o repositório
 ```bash
-git clone [https://github.com/daniele-senko/juscleaner.git](https://github.com/daniele-senko/juscleaner.git)
+git clone https://github.com/daniele-senko/juscleaner.git
 cd juscleaner
-
 ```
 
 ### 2. Configurar o Backend
@@ -95,6 +97,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](https://www.goog
 
 ---
 
-Desenvolvido por [Seu Nome](https://www.google.com/search?q=https://www.linkedin.com/in/daniele-senko/)
-
-```
+Desenvolvido por [Daniele Senko](https://www.google.com/search?q=https://www.linkedin.com/in/daniele-senko/)
