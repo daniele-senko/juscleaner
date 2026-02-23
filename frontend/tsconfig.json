@@ -25,7 +25,5 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["src"],
-  
-  // ADICIONE ESTA PARTE AQUI EMBAIXO:
-  "exclude": ["node_modules", "../backend"] 
+  "exclude": ["node_modules", "../backend"]
 }
