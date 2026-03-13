@@ -11,7 +11,7 @@ import { FileList } from "./components/FileList";
 import { AdBanner } from "./components/AdBanner";
 
 function App() {
-  const { files, addFiles, removeFile, clearAll, optimizeFile, isCompressing } =
+  const { files, addFiles, removeFile, clearAll, optimizeFile } =
     useFileHandler();
   const [showClearModal, setShowClearModal] = useState(false);
 
@@ -117,13 +117,11 @@ function App() {
               toast.warning("Arquivo removido.");
             }}
             onOptimize={optimizeFile}
-            isCompressing={isCompressing}
           />
 
           {files.length > 0 && (
             <div className="mt-8 flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-100">
               <button
-
                 onClick={handleClearClick}
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-rose-600 font-medium transition-colors cursor-pointer border border-transparent hover:border-slate-200"
               >

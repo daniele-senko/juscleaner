@@ -15,15 +15,9 @@ interface FileListProps {
   files: ProcessedFile[];
   onRemove: (id: string) => void;
   onOptimize: (id: string) => void;
-  isCompressing?: boolean;
 }
 
-export const FileList = ({
-  files,
-  onRemove,
-  onOptimize,
-  isCompressing = false,
-}: FileListProps) => {
+export const FileList = ({ files, onRemove, onOptimize }: FileListProps) => {
   if (files.length === 0) return null;
 
   const copyToClipboard = (text: string) => {
@@ -128,17 +122,17 @@ export const FileList = ({
               {file.size > 100 * 1024 && (
                 <button
                   onClick={() => onOptimize(file.id)}
-                  disabled={isCompressing}
+                  disabled={file.isCompressing}
                   className={`
                     flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all
                     ${
-                      isCompressing
+                      file.isCompressing
                         ? "bg-slate-100 text-slate-400 cursor-wait"
                         : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 shadow-sm hover:shadow"
                     }
                   `}
                 >
-                  {isCompressing ? (
+                  {file.isCompressing ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
                     <Wand2 className="w-3 h-3" />

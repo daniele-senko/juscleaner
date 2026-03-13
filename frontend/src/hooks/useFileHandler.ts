@@ -16,11 +16,11 @@ export interface ProcessedFile {
   size: number;
   sizeFormatted: string;
   status: "ok" | "warning" | "error";
+  isCompressing: boolean;
 }
 
 export const useFileHandler = () => {
   const [files, setFiles] = useState<ProcessedFile[]>([]);
-  const [isCompressing, setIsCompressing] = useState(false);
 
   const classifyStatus = (size: number) => {
     if (size > 10 * 1024 * 1024) return "error";
@@ -45,6 +45,7 @@ export const useFileHandler = () => {
         size: file.size,
         sizeFormatted: formatSize(file.size),
         status: classifyStatus(file.size) as "ok" | "warning" | "error",
+        isCompressing: false,
       }),
     );
 
@@ -55,7 +56,9 @@ export const useFileHandler = () => {
     const target = files.find((f) => f.id === id);
     if (!target) return;
 
-    setIsCompressing(true);
+    setFiles((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, isCompressing: true } : f)),
+    );
     const toastId = toast.loading("Comprimindo...");
 
     try {
@@ -96,7 +99,9 @@ export const useFileHandler = () => {
       console.error(error);
       toast.error("Erro ao comprimir arquivo.", { id: toastId });
     } finally {
-      setIsCompressing(false);
+      setFiles((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, isCompressing: false } : f)),
+      );
     }
   };
 
@@ -111,6 +116,5 @@ export const useFileHandler = () => {
     removeFile,
     clearAll,
     optimizeFile,
-    isCompressing,
   };
 };
