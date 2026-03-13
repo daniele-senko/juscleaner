@@ -10,7 +10,6 @@ export const Dropzone = ({ onFilesAdded }: DropzoneProps) => {
     onDrop: onFilesAdded,
     accept: {
       "application/pdf": [".pdf"],
-      "image/*": [".png", ".jpg", ".jpeg"],
     },
   });
 
@@ -42,7 +41,7 @@ export const Dropzone = ({ onFilesAdded }: DropzoneProps) => {
               : "Clique ou arraste seus arquivos"}
           </p>
           <p className="text-sm text-slate-400 mt-1">
-            PDF, JPG ou PNG (Compressão Inteligente e Segura)
+            Apenas PDF (Compressão Inteligente e Segura)
           </p>
         </div>
       </div>
