@@ -1,4 +1,5 @@
 import { Share2, Heart } from "lucide-react";
+import { toast } from "sonner";
 
 interface AdBannerProps {
   format?: "horizontal" | "rectangle";
@@ -37,7 +38,7 @@ export const AdBanner = ({ format = "horizontal" }: AdBannerProps) => {
             });
           } else {
             navigator.clipboard.writeText(window.location.href);
-            alert("Link copiado para a área de transferência!");
+            toast.success("Link copiado para a área de transferência!");
           }
         }}
         className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-md shadow-indigo-200 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
