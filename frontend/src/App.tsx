@@ -19,6 +19,7 @@ function App() {
     optimizeFile,
     optimizeAll,
     isOptimizingAll,
+    updateFileName,
   } = useFileHandler();
   const [showClearModal, setShowClearModal] = useState(false);
 
@@ -124,6 +125,7 @@ function App() {
               toast.warning("Arquivo removido.");
             }}
             onOptimize={optimizeFile}
+            onRename={updateFileName}
           />
 
           {files.length > 0 && (

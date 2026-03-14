@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FileText,
   Trash2,
@@ -7,23 +8,54 @@ import {
   AlertCircle,
   Loader2,
   ArrowRight,
+  Pencil,
+  Check,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ProcessedFile } from "../hooks/useFileHandler";
+import { sanitizeFileName } from "../utils/fileSanitizer";
 
 interface FileListProps {
   files: ProcessedFile[];
   onRemove: (id: string) => void;
   onOptimize: (id: string) => void;
+  onRename: (id: string, newName: string) => void;
 }
 
-export const FileList = ({ files, onRemove, onOptimize }: FileListProps) => {
+export const FileList = ({
+  files,
+  onRemove,
+  onOptimize,
+  onRename,
+}: FileListProps) => {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+
   if (files.length === 0) return null;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Nome copiado!");
   };
+
+  const startEditing = (file: ProcessedFile) => {
+    setEditingId(file.id);
+    setEditValue(file.sanitizedName);
+  };
+
+  const confirmEdit = (id: string) => {
+    const sanitized = sanitizeFileName(editValue);
+    if (!sanitized) {
+      toast.error("Nome inválido.");
+      return;
+    }
+    onRename(id, sanitized);
+    setEditingId(null);
+    toast.success("Nome atualizado!");
+  };
+
+  const cancelEdit = () => setEditingId(null);
 
   return (
     <div className="mt-8 space-y-4">
@@ -70,18 +102,56 @@ export const FileList = ({ files, onRemove, onOptimize }: FileListProps) => {
 
               <div className="flex flex-col min-w-0">
                 {/* Nome do Arquivo */}
-                <button
-                  onClick={() => copyToClipboard(file.sanitizedName)}
-                  className="text-left group/name"
-                  title="Clique para copiar"
-                >
-                  <span className="block text-sm font-semibold text-slate-700 truncate group-hover/name:text-blue-600 transition-colors">
-                    {file.sanitizedName}
-                  </span>
-                  <span className="text-xs text-slate-400 truncate flex items-center gap-1">
-                    Original: {file.originalName}
-                  </span>
-                </button>
+                {editingId === file.id ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      autoFocus
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") confirmEdit(file.id);
+                        if (e.key === "Escape") cancelEdit();
+                      }}
+                      className="text-sm font-semibold text-slate-700 border-b border-blue-400 bg-transparent outline-none w-full"
+                    />
+                    <button
+                      onClick={() => confirmEdit(file.id)}
+                      className="text-emerald-600 hover:text-emerald-700 shrink-0"
+                      title="Confirmar"
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-slate-400 hover:text-slate-600 shrink-0"
+                      title="Cancelar"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 group/name">
+                    <button
+                      onClick={() => copyToClipboard(file.sanitizedName)}
+                      className="text-left min-w-0"
+                      title="Clique para copiar"
+                    >
+                      <span className="block text-sm font-semibold text-slate-700 truncate group-hover/name:text-blue-600 transition-colors">
+                        {file.sanitizedName}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => startEditing(file)}
+                      className="text-slate-300 hover:text-slate-500 transition-colors shrink-0"
+                      title="Editar nome"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+                <span className="text-xs text-slate-400 truncate mt-0.5">
+                  Original: {file.originalName}
+                </span>
 
                 {/* Badges de Status (Onde a mágica do UX acontece) */}
                 <div className="flex items-center gap-2 mt-2 flex-wrap">

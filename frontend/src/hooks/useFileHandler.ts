@@ -168,6 +168,12 @@ export const useFileHandler = () => {
     setIsOptimizingAll(false);
   };
 
+  const updateFileName = (id: string, newName: string) => {
+    setFiles((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, sanitizedName: newName } : f)),
+    );
+  };
+
   const removeFile = (id: string) =>
     setFiles((prev) => prev.filter((f) => f.id !== id));
 
@@ -181,5 +187,6 @@ export const useFileHandler = () => {
     optimizeFile,
     optimizeAll,
     isOptimizingAll,
+    updateFileName,
   };
 };
