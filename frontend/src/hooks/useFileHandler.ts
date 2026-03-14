@@ -21,6 +21,7 @@ export interface ProcessedFile {
 
 export const useFileHandler = () => {
   const [files, setFiles] = useState<ProcessedFile[]>([]);
+  const [isOptimizingAll, setIsOptimizingAll] = useState(false);
 
   const classifyStatus = (size: number) => {
     if (size > 10 * 1024 * 1024) return "error";
@@ -105,6 +106,68 @@ export const useFileHandler = () => {
     }
   };
 
+  const optimizeAll = async () => {
+    const targets = files.filter(
+      (f) => f.size > 100 * 1024 && !f.isCompressing,
+    );
+    if (targets.length === 0) return;
+
+    setIsOptimizingAll(true);
+    const toastId = toast.loading(`Comprimindo 1 de ${targets.length}...`);
+
+    for (let i = 0; i < targets.length; i++) {
+      const target = targets[i];
+      toast.loading(`Comprimindo ${i + 1} de ${targets.length}...`, {
+        id: toastId,
+      });
+
+      setFiles((prev) =>
+        prev.map((f) =>
+          f.id === target.id ? { ...f, isCompressing: true } : f,
+        ),
+      );
+
+      try {
+        const fileToCompress = new File(
+          [target.activeBlob],
+          target.originalName,
+          { type: "application/pdf", lastModified: Date.now() },
+        );
+
+        const compressedBlob = await compressPDF(fileToCompress);
+
+        if (compressedBlob.size < target.activeBlob.size) {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === target.id
+                ? {
+                    ...f,
+                    activeBlob: compressedBlob,
+                    size: compressedBlob.size,
+                    sizeFormatted: formatSize(compressedBlob.size),
+                    status: classifyStatus(compressedBlob.size),
+                  }
+                : f,
+            ),
+          );
+        }
+      } catch (error) {
+        console.error(`Error compressing ${target.originalName}:`, error);
+      } finally {
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === target.id ? { ...f, isCompressing: false } : f,
+          ),
+        );
+      }
+    }
+
+    toast.success(`${targets.length} arquivo(s) comprimido(s)!`, {
+      id: toastId,
+    });
+    setIsOptimizingAll(false);
+  };
+
   const removeFile = (id: string) =>
     setFiles((prev) => prev.filter((f) => f.id !== id));
 
@@ -116,5 +179,7 @@ export const useFileHandler = () => {
     removeFile,
     clearAll,
     optimizeFile,
+    optimizeAll,
+    isOptimizingAll,
   };
 };

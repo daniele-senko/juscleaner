@@ -1,7 +1,7 @@
 import { useState } from "react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { Download, Trash, X, AlertCircle } from "lucide-react";
+import { Download, Trash, X, AlertCircle, Wand2, Loader2 } from "lucide-react";
 import { Toaster, toast } from "sonner";
 
 import { useFileHandler } from "./hooks/useFileHandler";
@@ -11,8 +11,15 @@ import { FileList } from "./components/FileList";
 import { AdBanner } from "./components/AdBanner";
 
 function App() {
-  const { files, addFiles, removeFile, clearAll, optimizeFile } =
-    useFileHandler();
+  const {
+    files,
+    addFiles,
+    removeFile,
+    clearAll,
+    optimizeFile,
+    optimizeAll,
+    isOptimizingAll,
+  } = useFileHandler();
   const [showClearModal, setShowClearModal] = useState(false);
 
   const generateZip = async () => {
@@ -129,11 +136,26 @@ function App() {
                 Limpar tudo
               </button>
 
+              {files.length > 1 && (
+                <button
+                  onClick={optimizeAll}
+                  disabled={isOptimizingAll}
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-wait"
+                >
+                  {isOptimizingAll ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Wand2 className="w-4 h-4" />
+                  )}
+                  Comprimir todos
+                </button>
+              )}
+
               <button
                 onClick={handleDownload}
                 className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer uppercase"
               >
-                <Download className="w-5 h-5 upp" />
+                <Download className="w-5 h-5" />
                 {files.length > 1
                   ? "Baixar ZIP Higienizado"
                   : "Baixar Arquivo Pronto"}
