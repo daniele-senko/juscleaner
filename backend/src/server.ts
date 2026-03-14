@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import compressRoute from "./routes/compress";
 
 const app = express();
@@ -13,8 +14,14 @@ app.use(
   }),
 );
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // max 30 requests per window
+  message: { error: "Too many requests, please try again later" },
+});
+
 app.use(express.json());
-app.use("/compress", compressRoute);
+app.use("/compress", limiter, compressRoute);
 
 app.get("/", (req, res) => {
   res.send("JusCleaner API Online 🚀");

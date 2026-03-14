@@ -1,37 +1,67 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import fs from "fs";
 import os from "os";
 import { compressPdf } from "../utils/pdf/compress";
 
 const router = Router();
-const upload = multer({ dest: os.tmpdir() });
 
-router.post("/", upload.single("file"), async (req, res) => {
-  if (!req.file) return res.status(400).send("Arquivo não enviado");
-
-  const originalPath = req.file.path;
-  const newPath = `${req.file.path}.pdf`; 
-
-  try {
-    fs.renameSync(originalPath, newPath);
-    console.log(`📂 Processando: ${newPath}`);
-
-    const compressedBuffer = await compressPdf(newPath);
-
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "attachment; filename=compressed.pdf");
-    res.send(compressedBuffer);
-
-  } catch (error: any) {
-    console.error(" Erro:", error.message);
-    res.status(500).json({ error: "Erro ao processar PDF", details: error.message });
-  } finally {
-    try {
-      if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
-      else if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
-    } catch (e) { console.error("Erro cleanup:", e); }
-  }
+const upload = multer({
+  dest: os.tmpdir(),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype !== "application/pdf") {
+      return cb(new Error("Only PDF files are accepted"));
+    }
+    cb(null, true);
+  },
 });
+
+router.post(
+  "/",
+  (req: Request, res: Response, next: NextFunction) => {
+    upload.single("file")(req, res, (err) => {
+      if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({ error: "File exceeds the 50MB limit" });
+      }
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  },
+  async (req: Request, res: Response) => {
+    if (!req.file) return res.status(400).send("No file uploaded");
+
+    const originalPath = req.file.path;
+    const newPath = `${req.file.path}.pdf`;
+
+    try {
+      fs.renameSync(originalPath, newPath);
+      console.log(`📂 Processing: ${newPath}`);
+
+      const compressedBuffer = await compressPdf(newPath);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=compressed.pdf",
+      );
+      res.send(compressedBuffer);
+    } catch (error: any) {
+      console.error("Error:", error.message);
+      res
+        .status(500)
+        .json({ error: "Failed to process PDF", details: error.message });
+    } finally {
+      try {
+        if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
+        else if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
+      } catch (e) {
+        console.error("Cleanup error:", e);
+      }
+    }
+  },
+);
 
 export default router;
