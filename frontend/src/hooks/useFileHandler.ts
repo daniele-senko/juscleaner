@@ -17,6 +17,7 @@ export interface ProcessedFile {
   sizeFormatted: string;
   status: "ok" | "warning" | "error";
   isCompressing: boolean;
+  uploadProgress: number;
 }
 
 export const useFileHandler = () => {
@@ -47,6 +48,7 @@ export const useFileHandler = () => {
         sizeFormatted: formatSize(file.size),
         status: classifyStatus(file.size) as "ok" | "warning" | "error",
         isCompressing: false,
+        uploadProgress: 0,
       }),
     );
 
@@ -72,7 +74,13 @@ export const useFileHandler = () => {
         },
       );
 
-      const compressedBlob = await compressPDF(fileToCompress);
+      const compressedBlob = await compressPDF(fileToCompress, (percent) => {
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === id ? { ...f, uploadProgress: percent } : f,
+          ),
+        );
+      });
 
       if (compressedBlob.size >= target.activeBlob.size) {
         toast.info("O arquivo já está no limite máximo de compressão.", {
@@ -101,7 +109,9 @@ export const useFileHandler = () => {
       toast.error("Erro ao comprimir arquivo.", { id: toastId });
     } finally {
       setFiles((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, isCompressing: false } : f)),
+        prev.map((f) =>
+          f.id === id ? { ...f, isCompressing: false, uploadProgress: 0 } : f,
+        ),
       );
     }
   };

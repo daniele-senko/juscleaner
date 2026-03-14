@@ -190,25 +190,53 @@ export const FileList = ({
             {/* Botões de Ação */}
             <div className="flex items-center gap-2 mt-4 sm:mt-0 self-end sm:self-center">
               {file.size > 100 * 1024 && (
-                <button
-                  onClick={() => onOptimize(file.id)}
-                  disabled={file.isCompressing}
-                  className={`
-                    flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all
-                    ${
-                      file.isCompressing
-                        ? "bg-slate-100 text-slate-400 cursor-wait"
-                        : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 shadow-sm hover:shadow"
-                    }
-                  `}
-                >
-                  {file.isCompressing ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : (
-                    <Wand2 className="w-3 h-3" />
+                <div className="flex flex-col items-end gap-1">
+                  <button
+                    onClick={() => onOptimize(file.id)}
+                    disabled={file.isCompressing}
+                    className={`
+                      flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all
+                      ${
+                        file.isCompressing
+                          ? "bg-slate-100 text-slate-400 cursor-wait"
+                          : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 shadow-sm hover:shadow"
+                      }
+                    `}
+                  >
+                    {file.isCompressing ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Wand2 className="w-3 h-3" />
+                    )}
+                    {isOptimized ? "Recomprimir" : "Comprimir"}
+                  </button>
+                  {file.isCompressing && (
+                    <div className="w-full flex items-center gap-2">
+                      {file.uploadProgress < 100 ? (
+                        <>
+                          <div className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-indigo-500 rounded-full transition-all duration-200"
+                              style={{ width: `${file.uploadProgress}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] text-slate-400 shrink-0">
+                            {file.uploadProgress}%
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-indigo-400 rounded-full animate-pulse" />
+                          </div>
+                          <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
+                            Processando...
+                          </span>
+                        </>
+                      )}
+                    </div>
                   )}
-                  {isOptimized ? "Recomprimir" : "Comprimir"}
-                </button>
+                </div>
               )}
 
               <button
