@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
-import fs from "fs";
+import { promises as fsp } from "fs";
 import os from "os";
 import { compressPdf } from "../utils/pdf/compress";
 
@@ -37,7 +37,7 @@ router.post(
     const newPath = `${req.file.path}.pdf`;
 
     try {
-      fs.renameSync(originalPath, newPath);
+      await fsp.rename(originalPath, newPath);
       console.log(`📂 Processing: ${newPath}`);
 
       const compressedBuffer = await compressPdf(newPath);
@@ -55,8 +55,7 @@ router.post(
         .json({ error: "Failed to process PDF", details: error.message });
     } finally {
       try {
-        if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
-        else if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
+        await Promise.allSettled([fsp.unlink(newPath), fsp.unlink(originalPath)]);
       } catch (e) {
         console.error("Cleanup error:", e);
       }
