@@ -34,9 +34,16 @@ export const FileList = ({
 
   if (files.length === 0) return null;
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Nome copiado!");
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Nome copiado!");
+    } catch (error) {
+      console.error("Clipboard error:", error);
+      toast.error(
+        "Não foi possível copiar automaticamente. Copie manualmente.",
+      );
+    }
   };
 
   const startEditing = (file: ProcessedFile) => {
