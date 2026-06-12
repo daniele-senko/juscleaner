@@ -6,8 +6,6 @@
 
 ![Status do Projeto](https://img.shields.io/badge/status-ativo-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue)
 
----
-
 https://github.com/user-attachments/assets/4aad5959-30e9-433f-bbee-d7bfeb3b4e40
 
 ---
