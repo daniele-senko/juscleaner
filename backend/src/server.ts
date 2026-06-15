@@ -1,10 +1,13 @@
 import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import compressRoute from "./routes/compress";
 
 const app = express();
+
+app.use(helmet());
 
 app.use(
   cors({

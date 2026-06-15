@@ -6,6 +6,8 @@ import { compressPdf } from "../utils/pdf/compress";
 
 const router = Router();
 
+const PDF_MAGIC = Buffer.from("%PDF-");
+
 const upload = multer({
   dest: os.tmpdir(),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
@@ -16,6 +18,17 @@ const upload = multer({
     cb(null, true);
   },
 });
+
+async function isPdf(filePath: string): Promise<boolean> {
+  const fd = await fsp.open(filePath, "r");
+  try {
+    const buf = Buffer.alloc(5);
+    await fd.read(buf, 0, 5, 0);
+    return buf.equals(PDF_MAGIC);
+  } finally {
+    await fd.close();
+  }
+}
 
 router.post(
   "/",
@@ -37,6 +50,11 @@ router.post(
     const newPath = `${req.file.path}.pdf`;
 
     try {
+      if (!(await isPdf(originalPath))) {
+        await fsp.unlink(originalPath).catch(() => {});
+        return res.status(400).json({ error: "Invalid file: not a valid PDF" });
+      }
+
       await fsp.rename(originalPath, newPath);
       console.log(`📂 Processing: ${newPath}`);
 
@@ -50,9 +68,11 @@ router.post(
       res.send(compressedBuffer);
     } catch (error: any) {
       console.error("Error:", error.message);
-      res
-        .status(500)
-        .json({ error: "Failed to process PDF", details: error.message });
+      const isDev = process.env.NODE_ENV !== "production";
+      res.status(500).json({
+        error: "Failed to process PDF",
+        ...(isDev && { details: error.message }),
+      });
     } finally {
       try {
         await Promise.allSettled([fsp.unlink(newPath), fsp.unlink(originalPath)]);
