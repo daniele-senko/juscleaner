@@ -5,6 +5,10 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import compressRoute from "./routes/compress";
 
+import { promises as fsp } from "fs";
+import os from "os";
+import path from "path";
+
 const app = express();
 app.set("trust proxy", 1); // Trust the first proxy (Render load balancer)
 
@@ -33,6 +37,28 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3333;
 
-app.listen(PORT, () => {
+async function cleanupOrphans() {
+  try {
+    const tmpDir = os.tmpdir();
+    const files = await fsp.readdir(tmpDir);
+    // Remove old files matching typical multer or compressed patterns created by this app
+    const now = Date.now();
+    for (const file of files) {
+      if (file.endsWith(".pdf") || file.includes("compressed")) {
+        const filePath = path.join(tmpDir, file);
+        const stats = await fsp.stat(filePath);
+        // If older than 1 hour, remove
+        if (now - stats.mtimeMs > 60 * 60 * 1000) {
+          await fsp.unlink(filePath).catch(() => {});
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Failed to cleanup orphans:", err);
+  }
+}
+
+app.listen(PORT, async () => {
+  await cleanupOrphans();
   console.log(`✅ Server running on port ${PORT}`);
 });

@@ -23,11 +23,13 @@ A arquitetura híbrida foi desenhada para superar as limitações de tempo de ex
 ## 🚀 Tecnologias Utilizadas
 
 ### Frontend
+
 - **React.js (Vite)** — interface reativa com TypeScript
 - **Tailwind CSS** — estilização utilitária para um design limpo e responsivo
 - **Hospedagem:** Vercel
 
 ### Backend
+
 - **Node.js & Express** — servidor para gerenciamento das requisições
 - **iLovePDF SDK** — integração para compressão de PDFs
 - **Multer** — middleware para upload com validação de tipo e tamanho
@@ -37,6 +39,7 @@ A arquitetura híbrida foi desenhada para superar as limitações de tempo de ex
 ## ⚙️ Arquitetura
 
 O sistema opera em duas frentes:
+
 1. **Frontend:** Interface visual hospedada na Vercel. Antes mesmo do envio, o cliente já valida e sanitiza o arquivo.
 2. **Backend:** API hospedada no Render que recebe o arquivo, realiza a comunicação com o serviço de compressão e retorna o binário processado.
 
@@ -45,6 +48,7 @@ O sistema opera em duas frentes:
 Para executar este projeto na sua máquina, você precisará do [Node.js](https://nodejs.org/) instalado e de uma conta no [iLovePDF](https://developer.ilovepdf.com) para obter as chaves de API.
 
 ### 1. Clonar o repositório
+
 ```bash
 git clone https://github.com/daniele-senko/juscleaner.git
 cd juscleaner
@@ -87,16 +91,16 @@ Para o deploy funcionar, as seguintes variáveis devem ser configuradas nos serv
 
 **No Backend (Render):**
 
-| Variável | Descrição |
-|---|---|
+| Variável              | Descrição                     |
+| --------------------- | ----------------------------- |
 | `ILOVEPDF_PUBLIC_KEY` | Chave pública da API iLovePDF |
 | `ILOVEPDF_SECRET_KEY` | Chave secreta da API iLovePDF |
-| `ALLOWED_ORIGIN` | URL do frontend em produção |
+| `ALLOWED_ORIGIN`      | URL do frontend em produção   |
 
 **No Frontend (Vercel):**
 
-| Variável | Descrição |
-|---|---|
+| Variável       | Descrição                                                              |
+| -------------- | ---------------------------------------------------------------------- |
 | `VITE_API_URL` | URL do backend em produção (ex: `https://juscleaner-api.onrender.com`) |
 
 ## 📄 Licença
