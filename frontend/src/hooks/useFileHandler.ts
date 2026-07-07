@@ -55,14 +55,14 @@ export const useFileHandler = () => {
     setFiles((prev) => [...prev, ...mapped]);
   };
 
-  const optimizeFile = async (id: string) => {
+  const optimizeFile = async (id: string, silentToast = false) => {
     const target = files.find((f) => f.id === id);
     if (!target) return;
 
     setFiles((prev) =>
       prev.map((f) => (f.id === id ? { ...f, isCompressing: true } : f)),
     );
-    const toastId = toast.loading("Comprimindo...");
+    const toastId = silentToast ? undefined : toast.loading("Comprimindo...");
 
     try {
       const fileToCompress = new File(
@@ -83,7 +83,7 @@ export const useFileHandler = () => {
       });
 
       if (compressedBlob.size >= target.activeBlob.size) {
-        toast.info("O arquivo já está no limite máximo de compressão.", {
+        if (!silentToast) toast.info("O arquivo já está no limite máximo de compressão.", {
           id: toastId,
         });
         return;
@@ -103,10 +103,10 @@ export const useFileHandler = () => {
         ),
       );
 
-      toast.success("Arquivo comprimido com sucesso!", { id: toastId });
+      if (!silentToast) toast.success("Arquivo comprimido com sucesso!", { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao comprimir arquivo.", { id: toastId });
+      if (!silentToast) toast.error("Erro ao comprimir arquivo.", { id: toastId });
     } finally {
       setFiles((prev) =>
         prev.map((f) =>
@@ -126,50 +126,11 @@ export const useFileHandler = () => {
     const toastId = toast.loading(`Comprimindo 1 de ${targets.length}...`);
 
     for (let i = 0; i < targets.length; i++) {
-      const target = targets[i];
       toast.loading(`Comprimindo ${i + 1} de ${targets.length}...`, {
         id: toastId,
       });
 
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === target.id ? { ...f, isCompressing: true } : f,
-        ),
-      );
-
-      try {
-        const fileToCompress = new File(
-          [target.activeBlob],
-          target.originalName,
-          { type: "application/pdf", lastModified: Date.now() },
-        );
-
-        const compressedBlob = await compressPDF(fileToCompress);
-
-        if (compressedBlob.size < target.activeBlob.size) {
-          setFiles((prev) =>
-            prev.map((f) =>
-              f.id === target.id
-                ? {
-                    ...f,
-                    activeBlob: compressedBlob,
-                    size: compressedBlob.size,
-                    sizeFormatted: formatSize(compressedBlob.size),
-                    status: classifyStatus(compressedBlob.size),
-                  }
-                : f,
-            ),
-          );
-        }
-      } catch (error) {
-        console.error(`Error compressing ${target.originalName}:`, error);
-      } finally {
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === target.id ? { ...f, isCompressing: false } : f,
-          ),
-        );
-      }
+      await optimizeFile(targets[i].id, true);
     }
 
     toast.success(`${targets.length} arquivo(s) comprimido(s)!`, {

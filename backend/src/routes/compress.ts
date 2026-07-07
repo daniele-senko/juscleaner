@@ -66,12 +66,13 @@ router.post(
         "attachment; filename=compressed.pdf",
       );
       res.send(compressedBuffer);
-    } catch (error: any) {
-      console.error("Error:", error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.error("Error:", errorMessage);
       const isDev = process.env.NODE_ENV !== "production";
       res.status(500).json({
         error: "Failed to process PDF",
-        ...(isDev && { details: error.message }),
+        ...(isDev && { details: errorMessage }),
       });
     } finally {
       try {
