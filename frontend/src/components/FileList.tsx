@@ -113,6 +113,7 @@ export const FileList = ({
                   <div className="flex items-center gap-2">
                     <input
                       autoFocus
+                      aria-label="Novo nome do arquivo"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onKeyDown={(e) => {
@@ -123,17 +124,19 @@ export const FileList = ({
                     />
                     <button
                       onClick={() => confirmEdit(file.id)}
-                      className="text-emerald-600 hover:text-emerald-700 shrink-0"
+                      className="text-emerald-600 hover:text-emerald-700 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                       title="Confirmar"
+                      aria-label="Confirmar edição do nome"
                     >
-                      <Check className="w-4 h-4" />
+                      <Check className="w-4 h-4" aria-hidden="true" />
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="text-slate-400 hover:text-slate-600 shrink-0"
+                      className="text-slate-400 hover:text-slate-600 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                       title="Cancelar"
+                      aria-label="Cancelar edição do nome"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 ) : (
@@ -149,10 +152,11 @@ export const FileList = ({
                     </button>
                     <button
                       onClick={() => startEditing(file)}
-                      className="text-slate-300 hover:text-slate-500 transition-colors shrink-0"
+                      className="text-slate-300 hover:text-slate-500 transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                       title="Editar nome"
+                      aria-label="Editar nome do arquivo"
                     >
-                      <Pencil className="w-3 h-3" />
+                      <Pencil className="w-3 h-3" aria-hidden="true" />
                     </button>
                   </div>
                 )}
@@ -164,10 +168,12 @@ export const FileList = ({
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   {isOptimized ? (
                     <div className="flex items-center gap-1.5 text-xs font-medium bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md animate-pop">
+                      <span className="sr-only">Status: Sucesso. Reduzido de </span>
                       <span className="line-through opacity-50">
                         {file.originalSizeFormatted}
                       </span>
-                      <ArrowRight className="w-3 h-3" />
+                      <ArrowRight className="w-3 h-3" aria-hidden="true" />
+                      <span className="sr-only"> para </span>
                       <span>{file.sizeFormatted}</span>
                       <span className="ml-1 bg-emerald-200 px-1 rounded text-[10px]">
                         -{reduction}%
@@ -175,19 +181,19 @@ export const FileList = ({
                     </div>
                   ) : (
                     <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                      <span className="sr-only">Tamanho atual: </span>
                       {file.sizeFormatted}
                     </span>
                   )}
 
                   {file.status === "warning" && (
                     <span className="flex items-center gap-1 text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
-                      <AlertTriangle className="w-3 h-3" /> Atenção ({">"}3MB)
+                      <AlertTriangle className="w-3 h-3" aria-hidden="true" /> <span className="sr-only">Aviso: </span> Atenção ({">"}3MB)
                     </span>
                   )}
                   {file.status === "error" && (
                     <span className="flex items-center gap-1 text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100 font-bold">
-                      <AlertCircle className="w-3 h-3" /> Recusado no PJe ({">"}
-                      10MB)
+                      <AlertCircle className="w-3 h-3" aria-hidden="true" /> <span className="sr-only">Erro: </span> Recusado no PJe ({">"}10MB)
                     </span>
                   )}
                 </div>
@@ -221,22 +227,33 @@ export const FileList = ({
                     <div className="w-full flex items-center gap-2">
                       {file.uploadProgress < 100 ? (
                         <>
-                          <div className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                          <div 
+                            className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden"
+                            role="progressbar" 
+                            aria-valuenow={file.uploadProgress} 
+                            aria-valuemin={0} 
+                            aria-valuemax={100} 
+                            aria-label="Progresso da compressão"
+                          >
                             <div
                               className="h-full bg-indigo-500 rounded-full transition-all duration-200"
                               style={{ width: `${file.uploadProgress}%` }}
                             />
                           </div>
-                          <span className="text-[10px] text-slate-400 shrink-0">
+                          <span className="text-[10px] text-slate-400 shrink-0" aria-hidden="true">
                             {file.uploadProgress}%
                           </span>
                         </>
                       ) : (
                         <>
-                          <div className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                          <div 
+                            className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden"
+                            role="progressbar" 
+                            aria-label="Processando arquivo no servidor"
+                          >
                             <div className="h-full bg-indigo-400 rounded-full animate-pulse" />
                           </div>
-                          <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
+                          <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap" aria-hidden="true">
                             Processando...
                           </span>
                         </>
@@ -248,10 +265,11 @@ export const FileList = ({
 
               <button
                 onClick={() => onRemove(file.id)}
-                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                 title="Remover arquivo"
+                aria-label="Remover arquivo da fila"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>

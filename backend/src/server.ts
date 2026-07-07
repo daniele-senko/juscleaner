@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import compressRoute from "./routes/compress";
 
 const app = express();
+app.set("trust proxy", 1); // Trust the first proxy (Render load balancer)
 
 app.use(helmet());
 
