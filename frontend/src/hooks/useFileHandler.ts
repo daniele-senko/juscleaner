@@ -33,24 +33,22 @@ export const useFileHandler = () => {
   const formatSize = (size: number) => `${(size / 1024 / 1024).toFixed(2)} MB`;
 
   const addFiles = (newFiles: File[]) => {
-    const mapped = newFiles.map(
-      (file): ProcessedFile => ({
-        id: crypto.randomUUID(),
-        originalFile: file,
-        activeBlob: file,
-        originalName: file.name,
-        sanitizedName: sanitizeFileName(file.name),
+    const mapped = newFiles.map((file): ProcessedFile => ({
+      id: crypto.randomUUID(),
+      originalFile: file,
+      activeBlob: file,
+      originalName: file.name,
+      sanitizedName: sanitizeFileName(file.name),
 
-        originalSize: file.size,
-        originalSizeFormatted: formatSize(file.size),
+      originalSize: file.size,
+      originalSizeFormatted: formatSize(file.size),
 
-        size: file.size,
-        sizeFormatted: formatSize(file.size),
-        status: classifyStatus(file.size) as "ok" | "warning" | "error",
-        isCompressing: false,
-        uploadProgress: 0,
-      }),
-    );
+      size: file.size,
+      sizeFormatted: formatSize(file.size),
+      status: classifyStatus(file.size) as "ok" | "warning" | "error",
+      isCompressing: false,
+      uploadProgress: 0,
+    }));
 
     setFiles((prev) => [...prev, ...mapped]);
   };
@@ -83,9 +81,10 @@ export const useFileHandler = () => {
       });
 
       if (compressedBlob.size >= target.activeBlob.size) {
-        if (!silentToast) toast.info("O arquivo já está no limite máximo de compressão.", {
-          id: toastId,
-        });
+        if (!silentToast)
+          toast.info("O arquivo já está no limite máximo de compressão.", {
+            id: toastId,
+          });
         return;
       }
 
@@ -103,10 +102,12 @@ export const useFileHandler = () => {
         ),
       );
 
-      if (!silentToast) toast.success("Arquivo comprimido com sucesso!", { id: toastId });
+      if (!silentToast)
+        toast.success("Arquivo comprimido com sucesso!", { id: toastId });
     } catch (error) {
       console.error(error);
-      if (!silentToast) toast.error("Erro ao comprimir arquivo.", { id: toastId });
+      if (!silentToast)
+        toast.error("Erro ao comprimir arquivo.", { id: toastId });
     } finally {
       setFiles((prev) =>
         prev.map((f) =>

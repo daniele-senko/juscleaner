@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:is(.dark *));
 @layer utilities {
   .bg-legal-pattern {
     background-color: #f8fafc;
@@ -9,8 +9,14 @@
 }
 
 @keyframes popIn {
-  0% { transform: scale(0.9); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-pop {

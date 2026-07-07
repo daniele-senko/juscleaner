@@ -11,22 +11,54 @@ if (!publicKey || !secretKey) {
   );
 }
 
-const instance = new ILovePDFApi(
-  publicKey,
-  secretKey,
-);
+const instance = new ILovePDFApi(publicKey, secretKey);
 
-export async function compressPdf(filePath: string): Promise<Buffer> {
+import crypto from "crypto";
+
+export async function compressPdf(
+  filePath: string,
+  destPath: string,
+  requestId: string,
+  timeoutMs: number = 60000,
+): Promise<void> {
   const task = instance.newTask("compress");
 
-  await task.start();
+  // Timeout Promise
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(
+      () => reject(new Error("Timeout during PDF compression")),
+      timeoutMs,
+    );
+  });
 
-  const file = new ILovePDFFile(path.resolve(filePath));
-  await task.addFile(file);
+  const processPromise = async () => {
+    console.log(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        requestId,
+        level: "info",
+        route: "/compress",
+        message: "Starting iLovePDF task",
+      }),
+    );
+    await task.start();
 
-  await task.process({ compression_level: "extreme" });
+    const file = new ILovePDFFile(path.resolve(filePath));
+    await task.addFile(file);
+    await task.process({ compression_level: "extreme" });
 
-  const data = await task.download();
+    const data = await task.download();
+    await require("fs").promises.writeFile(destPath, Buffer.from(data as any));
+    console.log(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        requestId,
+        level: "info",
+        route: "/compress",
+        message: "iLovePDF task completed and downloaded",
+      }),
+    );
+  };
 
-  return Buffer.from(data);
+  await Promise.race([processPromise(), timeoutPromise]);
 }
