@@ -1,6 +1,8 @@
 {
   "name": "juscleaner-backend",
   "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
